@@ -1,0 +1,35 @@
+syntax = "proto2"; // 声明语法类型：目前有proto2和proto3连个版本
+
+// 包名类似java
+// protoc命令参数：
+// java_package 指定生成代码包名，生成Java代码时如果不指定的话，生成代码的包名默认为下面
+// java_outer_classname Java外部类名，如果不指定，将通过将文件名转换为驼峰大小写来生成
+package cn.rectcircle.learn.addressbook;
+
+option java_package = "cn.rectcircle.learn.pb";
+option java_outer_classname = "AddressBookProtos";
+
+message Person {
+    // string int32 表示数据类型
+  required string name = 1; // 后面的 标号表示 唯一标识符，小于16，则只占1字节
+  required int32 id = 2; // required 表示必填
+  optional string email = 3; // optional 表示可选
+
+  enum PhoneType {
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [default = HOME];
+  }
+
+  repeated PhoneNumber phones = 4; // repeated 表示该字段可以重复多次，类似于数组
+}
+
+message AddressBook {
+  repeated Person people = 1;
+}
+// 编译: protoc -I=src/main/resources --java_out=src/main/java src/main/resources/address_book.proto
